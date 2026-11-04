@@ -49,3 +49,49 @@
 # fallback.py — обработка остальных сообщений
 # games.py — игровые команды
 # reactions.py — реакции на сообщения
+
+import asyncio
+import logging
+
+from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
+from aiogram.types import BotCommand
+
+import config
+from handlers import admin, common, fallback, games, reactions
+
+async def main():
+    logging.basicConfig(level=logging.INFO)
+    bot = Bot(token=config.TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    dp = Dispatcher()
+
+    dp.include_routers(common.router, admin.router, games.router, reactions.router, fallback.router)
+
+    await bot.set_my_commands([
+        BotCommand(command="slots", description="🎰 Автомат"),
+        BotCommand(command="dice", description="🎲 Кубик"),
+        BotCommand(command="darts", description="🎯 Дартс"),
+        BotCommand(command="basket", description="🏀 Баскетбол"),
+        BotCommand(command="football", description="⚽️ Футбол"),
+        BotCommand(command="bowling", description="🎳 Боулинг"),
+        BotCommand(command="luck", description="😎 Удача на сегодня"),
+        BotCommand(command="help", description="Что умеет бот"),
+    ])
+    await dp.start_polling(bot)
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        pass
+    finally:
+        print("\n👋🏼 Лавочка закрыта. Приходи завтра.")
+
+
+
+
+
+
+
+
