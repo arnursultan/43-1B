@@ -15,10 +15,8 @@ class OpenFilm(CallbackData, prefix="film"):
     id: int
     page: int
 
-
 class Page(CallbackData, prefix="page"):
     n: int
-
 
 class Act(CallbackData, prefix="act"):
     action: str
@@ -26,14 +24,11 @@ class Act(CallbackData, prefix="act"):
     page: int = 0
     v: int = 0
 
-
 class GenrePick(CallbackData, prefix="genre"):
     i: int
 
-
 class HypePick(CallbackData, prefix="hype"):
     v: int
-
 
 def main_menu():
     builder = ReplyKeyboardBuilder()
@@ -42,7 +37,6 @@ def main_menu():
     builder.button(text=BTN_RANDOM)
     builder.adjust(1, 2)
     return builder.as_markup(resize_keyboard=True, input_field_placeholder="Выбери в меню 👇")
-
 
 def films_kb(films, page: int, pages: int):
     builder = InlineKeyboardBuilder()
@@ -66,7 +60,6 @@ def films_kb(films, page: int, pages: int):
     builder.adjust(*sizes)
     return builder.as_markup()
 
-
 def card_kb(film, page: int):
     builder = InlineKeyboardBuilder()
     watch_text = "↩️ Не смотрел" if film["watched"] else "✅ Посмотрел"
@@ -81,14 +74,12 @@ def card_kb(film, page: int):
     builder.adjust(1, 5, 1, 1)
     return builder.as_markup()
 
-
 def confirm_delete_kb(film, page: int):
     builder = InlineKeyboardBuilder()
     builder.button(text="✅ Да, удалить", callback_data=Act(action="delok", id=film["id"], page=page))
     builder.button(text="↩️ Нет", callback_data=OpenFilm(id=film["id"], page=page))
     builder.adjust(2)
     return builder.as_markup()
-
 
 def pick_kb(film):
     builder = InlineKeyboardBuilder()
@@ -97,7 +88,6 @@ def pick_kb(film):
     builder.adjust(2)
     return builder.as_markup()
 
-
 def genre_kb():
     builder = InlineKeyboardBuilder()
     for i, genre in enumerate(GENRES):
@@ -105,7 +95,6 @@ def genre_kb():
     builder.adjust(2)
     builder.row(InlineKeyboardButton(text="❌ Отмена", callback_data="cancel"))
     return builder.as_markup()
-
 
 def hype_kb():
     builder = InlineKeyboardBuilder()
