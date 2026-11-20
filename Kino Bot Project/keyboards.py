@@ -1,3 +1,4 @@
+from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
@@ -39,6 +40,9 @@ def main_menu():
     return builder.as_markup(resize_keyboard=True, input_field_placeholder="Выбери в меню 👇")
 
 def films_kb(films, page: int, pages: int):
+    if pages < 1:
+        return InlineKeyboardBuilder().as_markup()
+    page = max(0, min(page, pages - 1))
     builder = InlineKeyboardBuilder()
     for f in films:
         icon = "✅" if f["watched"] else "🍿"
@@ -61,6 +65,7 @@ def films_kb(films, page: int, pages: int):
     return builder.as_markup()
 
 def card_kb(film, page: int):
+    page = max(0, page)
     builder = InlineKeyboardBuilder()
     watch_text = "↩️ Не смотрел" if film["watched"] else "✅ Посмотрел"
     builder.button(text=watch_text, callback_data=Act(action="watch", id=film["id"], page=page))
@@ -75,6 +80,7 @@ def card_kb(film, page: int):
     return builder.as_markup()
 
 def confirm_delete_kb(film, page: int):
+    page = max(0, page)
     builder = InlineKeyboardBuilder()
     builder.button(text="✅ Да, удалить", callback_data=Act(action="delok", id=film["id"], page=page))
     builder.button(text="↩️ Нет", callback_data=OpenFilm(id=film["id"], page=page))

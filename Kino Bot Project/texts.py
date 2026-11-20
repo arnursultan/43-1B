@@ -14,7 +14,7 @@ def card_text(film) -> str:
     status = "✅ Посмотрел. Мнение иметь разрешено." if film["watched"] else "🍿 В очереди"
     return (
         f"🎥 <b>{html.escape(film['title'])}</b>\n"
-        f"{film['genre']}\n"
+        f"{html.escape(film['genre'])}\n"
         f"🔥 Ажиотаж: {film['hype']}/5 — {HYPE_TEXT[film['hype']]}\n"
         f"{status}"
     )

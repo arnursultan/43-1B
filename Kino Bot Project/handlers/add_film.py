@@ -20,6 +20,9 @@ async def add_start(message: Message, state: FSMContext):
 @router.message(AddFilm.title, F.text)
 async def got_title(message: Message, state: FSMContext):
     title = message.text.strip()
+    if not title:
+        await message.answer("Название не должно быть пустым. Напиши название фильма.")
+        return
     if title.startswith("/"):
         await message.answer("Это команда, а не фильм, гений 🧠 Напиши название или отмени /cancel")
         return
@@ -36,7 +39,10 @@ async def title_not_text(message: Message):
 
 @router.callback_query(AddFilm.genre, GenrePick.filter())
 async def got_genre(callback:CallbackQuery, callback_data: GenrePick, state: FSMContext):
-    genre = GENRES(callback_data.i)
+    if not 0 <= callback_data.i < len(GENRES):
+        await callback.answer("Неизвестный жанр. Начни добавление заново.", show_alert=True)
+        return
+    genre = GENRES[callback_data.i]
     await state.update_data(genre=genre)
     await state.set_state(AddFilm.hype)
     await callback.message.edit_text(f"Жанр: {genre}\n\nНасколько хочешь посмотреть,", reply_markup=hype_kb())
@@ -50,7 +56,7 @@ async def genre_wants_button(message: Message):
 async def got_hype(callback: CallbackQuery, callback_data: HypePick, state: FSMContext, db: Database):
     data = await state.get_data()
     await state.clear()
-    film_id = db.add_film(callback.from_user_id, data["title"], data["genre"], callback_data.v)
+    film_id = db.add_film(callback.from_user.id, data["title"], data["genre"], callback_data.v)
     if film_id is None:
         await callback.message.edit_text(f"✋🏻 «{html.escape(data['title'])}» уже есть в твоей кинотеке.")
     else:
